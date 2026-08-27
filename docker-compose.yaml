@@ -1,0 +1,49 @@
+services:
+
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    container_name: jenkins
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - todo_network
+  db:
+    build: ./db
+    container_name: db
+    ports:
+      - "5432:5432"
+    networks:
+      - todo_network
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  api:
+    build: ./api
+    container_name: api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - todo_network
+  web:
+    build: ./web
+    container_name: web
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - todo_network
+networks:
+  todo_network:
+    driver: bridge
+volumes:
+  db_data:
+  jenkins_home:

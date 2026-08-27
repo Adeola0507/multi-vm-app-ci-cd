@@ -1,0 +1,18 @@
+FROM jenkins/jenkins:lts-jdk17
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y docker.io git && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
+
+RUN jenkins-plugin-cli --plugins \
+    git \
+    github \
+    workflow-aggregator \
+    pipeline-stage-view \
+    credentials-binding
+
+USER root

@@ -1,0 +1,30 @@
+FROM node:20-bullseye-slim
+
+# Install system dependencies (PostgreSQL client and curl)
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory inside the container
+WORKDIR /opt/api
+
+# Copy project files (package.json and source code) into the container
+COPY . .
+
+# Install production dependencies
+RUN npm install --omit=dev
+
+# Set environment variables (replacing the systemd config)
+ENV DB_HOST=db
+ENV DB_PORT=5432
+ENV DB_NAME=appdb
+ENV DB_USER=appuser
+ENV DB_PASSWORD=apppass123
+ENV PORT=3000
+
+# Expose the API port
+EXPOSE 3000
+
+CMD ["node", "server.js"]

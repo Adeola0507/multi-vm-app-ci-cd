@@ -1,0 +1,13 @@
+# Use the official PostgreSQL image (tracks your script's behavior)
+FROM postgres:16-bookworm
+
+# Set default environmental variables for the initial superuser
+ENV POSTGRES_DB=appdb
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=supersecretpassword
+
+# Copy the initialization SQL script into the automated entrypoint folder
+COPY init.sql /docker-entrypoint-initdb.d/
+
+# Expose the default PostgreSQL port
+EXPOSE 5432
