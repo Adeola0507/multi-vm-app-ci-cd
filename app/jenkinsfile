@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'docker compose build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'docker compose up -d'
+                sh 'sleep 10'
+
+                sh '''
+                    docker exec api node -e "require('http').get('http://localhost:3000', res => { process.exit(res.statusCode < 400 ? 0 : 1) }).on('error', () => process.exit(1))"
+                '''
+
+                sh '''
+                    docker exec web wget --spider -q http://localhost/ || exit 1
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker compose up -d'
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker compose ps'
+        }
+
+        failure {
+            sh 'docker compose logs --tail=100 || true'
+        }
+    }
+}
