@@ -17,7 +17,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'docker compose up -d'
+                sh 'docker compose up -d db api web'
                 sh 'sleep 10'
 
                 sh '''
@@ -32,7 +32,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker compose up -d'
+                sh 'docker compose up -d db api web'
             }
         }
     }
