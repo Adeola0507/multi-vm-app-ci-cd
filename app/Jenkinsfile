@@ -17,7 +17,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'docker compose up -d db api web'
+                sh 'docker compose up -d --no-recreate db api web'
                 sh 'sleep 10'
 
                 sh '''
