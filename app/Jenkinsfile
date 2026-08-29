@@ -1,3 +1,4 @@
+```groovy
 pipeline {
     agent any
 
@@ -21,7 +22,7 @@ pipeline {
                 sh 'sleep 10'
 
                 sh '''
-                    docker exec api node -e "require('http').get('http://localhost:3000', res => { process.exit(res.statusCode < 400 ? 0 : 1) }).on('error', () => process.exit(1))"
+                    docker exec api node -e "require('http').get('http://localhost:3000/health', res => { console.log('API health status:', res.statusCode); process.exit(res.statusCode < 400 ? 0 : 1) }).on('error', () => process.exit(1))"
                 '''
 
                 sh '''
@@ -47,3 +48,4 @@ pipeline {
         }
     }
 }
+```
