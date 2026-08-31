@@ -1,5 +1,6 @@
 #!/bin/bash
-set -e
+set -x
+exec > /var/log/startup-script.log 2>&1
 
 # Install Docker
 apt-get update -y
