@@ -2,12 +2,12 @@ resource "google_compute_instance" "ci_stack" {
   name         = "ci-teaching-kit-vm"
   machine_type = var.machine_type
   zone         = var.zone
-  tags         = ["ci-stack", "jenkins-server"]
+  tags         = ["ci-stack"]
 
   boot_disk {
     initialize_params {
       image = "debian-cloud/debian-12"
-      size  = 40 # GB — Jenkins + Nexus + Tomcat images/data need real space
+      size  = 40 
     }
   }
 
@@ -24,18 +24,17 @@ resource "google_compute_instance" "ci_stack" {
 }
 
 # Admin access: only your own IP can reach the Jenkins/Nexus/Tomcat UIs and SSH.
-# Never open these ports to 0.0.0.0/0 — that's an open invitation to anyone
-# on the internet to try the default credentials.
+
 resource "google_compute_firewall" "admin_access" {
   name    = "allow-ci-stack-admin"
   network = "default"
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "8080", "8081", "8082"]
+    ports    = ["22", "8080", "8081", "8082", "3000"]
   }
 
-  source_ranges = [var.admin_ip]
+  source_ranges = ["${var.admin_ip}"]
   target_tags   = ["ci-stack"]
 }
 
@@ -49,7 +48,7 @@ resource "google_compute_firewall" "github_webhook" {
 
   allow {
     protocol = "tcp"
-    ports    = ["8081"]
+    ports    = ["8080"]
   }
 
   source_ranges = [
@@ -58,5 +57,5 @@ resource "google_compute_firewall" "github_webhook" {
     "192.30.252.0/22",
     "185.199.108.0/22",
   ]
-  target_tags = ["jenkins-server"]
+  target_tags = ["ci-stack"]
 }

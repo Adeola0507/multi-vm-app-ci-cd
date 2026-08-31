@@ -25,7 +25,7 @@ variable "instance_name" {
 variable "machine_type" {
   description = "GCP machine type"
   type        = string
-  default     = "e2-micro"
+  default     = "e2-medium"
 }
 
 variable "username" {
@@ -35,13 +35,13 @@ variable "username" {
 }
 
 variable "admin_ip" {
-  description = "Your public IP address in CIDR notation"
+  description = "Your public IP address"
   type        = string
-  default     = "197.211.63.177"
+  default     = "197.211.63.119"
 }
 
 variable "repo_url" {
-  description = "URL of the GitHub repository to clone"
+  description = "URL of the GitHub repository"
   type        = string
   default     = "https://github.com/Adeola0507/multi-vm-app-ci-cd"
 }
