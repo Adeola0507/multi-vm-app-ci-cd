@@ -25,7 +25,7 @@ variable "instance_name" {
 variable "machine_type" {
   description = "GCP machine type"
   type        = string
-  default     = "e2-medium"
+  default     = "n2-standard-2"
 }
 
 variable "username" {

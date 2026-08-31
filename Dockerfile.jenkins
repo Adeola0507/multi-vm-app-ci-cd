@@ -2,23 +2,23 @@ FROM jenkins/jenkins:lts-jdk17
 
 USER root
 
+# Maven, so 'sh mvn clean package' just works in the Jenkinsfile without
+# configuring a Maven tool installation through the UI during the build.
 RUN apt-get update && \
-    apt-get install -y docker.io git curl ca-certificates && \
+    apt-get install -y maven && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Docker Compose v2
-RUN mkdir -p /usr/local/lib/docker/cli-plugins && \
-    curl -SL https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64 \
-    -o /usr/local/lib/docker/cli-plugins/docker-compose && \
-    chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
-
+# Skip the setup wizard so Jenkins is usable immediately after 'docker compose up'.
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 
+# Pre-install the plugins the pipeline needs, so nothing is done live via the UI.
 RUN jenkins-plugin-cli --plugins \
     git \
-    github \
     workflow-aggregator \
     pipeline-stage-view \
     credentials-binding
+    
+RUN mkdir -p /var/jenkins_home/.m2/repository && \
+    chown -R jenkins:jenkins /var/jenkins_home/.m2
 
-USER root
+USER jenkins
