@@ -20,7 +20,7 @@ usermod -aG docker debian # <- important
 
 # Clone the repo and bring the stack up
 cd /opt
-git clone ${repo_url} ci-teaching-kit
+git clone https://github.com/Adeola0507/multi-vm-app-ci-cd.git ci-teaching-kit
 cd ci-teaching-kit
 docker compose up -d --build
 
